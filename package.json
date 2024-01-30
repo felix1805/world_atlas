@@ -1,0 +1,16 @@
+{
+  "name": "world_atlas",
+  "version": "1.0.0",
+  "description": "This app can be used as a digital world atlas, it displays information on individual countries of interest. The repository uses nodeJS, javascript and HTML.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
