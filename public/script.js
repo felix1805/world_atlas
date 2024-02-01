@@ -6,18 +6,29 @@ document.getElementById('searchButton').addEventListener('click', () => {
 async function fetchCountryData(countryName) {
   const messageElement = document.getElementById('message')
   const resultsElement = document.getElementById('results')
+  const flagElement = document.getElementById('flagContainer')
+  const armsElement = document.getElementById('coatOfArmsContainer')
+
+  messageElement.textContent = ''
+
   try {
     const response = await fetch(`/search?country=${countryName}`)
     const data = await response.json()
     if (data.length === 1) {
+      resultsElement.style.display = 'block'
       displayCountryInfo(data[0], resultsElement)
     } else {
+      flagElement.style.display = 'none'
+      armsElement.style.display = 'none'
       displayCountryList(data, resultsElement)
     }
-    console.log(data)
+    // console.log(data)
   } catch (error) {
     console.log(error)
     messageElement.textContent = 'No result found. Check spelling and try again.'
+    resultsElement.style.display = 'none'
+    flagElement.style.display = 'none'
+    armsElement.style.display = 'none'
   }
 }
 
@@ -60,6 +71,26 @@ function displayCountryInfo(countryData, container) {
   <p><strong>UN Member:</strong> ${countryData.unMember ? 'Yes' : 'No'}</p>
   <p><strong>Google Maps Link:</strong> <a href=${countryData.maps.googleMaps}>Click here</a></p>
   `
-  document.getElementById('flagContainer').innerHTML = flagUrl ? `<p><strong>Flag:</strong></p><img src='${flagUrl}' alt='${flagAlt}'>` :''
-  document.getElementById('coatOfArmsContainer').innerHTML = coatOfArmsUrl ? `<p><strong>Flag:</strong></p><img src='${coatOfArmsUrl}' alt='Coat of Arms of ${countryData.name.common}'>` :''
+  document.getElementById('flagContainer').innerHTML = flagUrl ? `<p><strong>Flag:</strong></p><img src='${flagUrl}' alt='${flagAlt}'>` : ''
+  document.getElementById('coatOfArmsContainer').innerHTML = coatOfArmsUrl ? `<p><strong>Flag:</strong></p><img src='${coatOfArmsUrl}' alt='Coat of Arms of ${countryData.name.common}'>` : ''
+}
+
+function displayCountryList(countries, container) {
+  let listHtml = `<p>Multiple results obtained. Please choose from listed countries below:</p><ul>`
+
+  listHtml += countries.map(country => 
+    `<li class='country-item'data-country='${country.name.common}'>${country.name.common}</li>`
+    ).join('')
+
+  listHtml += `</ul>`
+
+  container.innerHTML = listHtml
+  container.style.display = 'block';
+
+  document.querySelectorAll('.country-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const selectedCountry = countries.find(country => country.name.common === item.dataset.country)
+      displayCountryInfo(selectedCountry, container)
+    })
+  })
 }
